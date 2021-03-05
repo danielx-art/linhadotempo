@@ -1,0 +1,25 @@
+{
+  "name": "linhadotempo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielx-art/linhadotempo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielx-art/linhadotempo/issues"
+  },
+  "homepage": "https://github.com/danielx-art/linhadotempo#readme",
+  "dependencies": {
+    "next": "^10.0.7",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
