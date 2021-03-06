@@ -1,5 +1,5 @@
-async function livro(req, res) {
-    const livroJSON = await fetch('/livro.json');
+function livro(req, res) {
+    const livroJSON = fetch('livro.json');
     res.json(livroJSON);
 }
 
