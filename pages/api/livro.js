@@ -1,6 +1,9 @@
+import livroJSON from '../../public/livro.json';
+
 function livro(req, res) {
-    const livroJSON = fetch('livro.json');
+
     res.json(livroJSON);
+    return;
 }
 
 export default livro;
