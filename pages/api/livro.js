@@ -41,10 +41,9 @@ export default function getLivro() {
     //      indent
     //  }
     //  to do that, i use helper variables to track the current and
-    //  the previous period (default null) and the current indent used
+    //  the previous periods (default null and empty)
     let currentPeriod = null;
-    let previousPeriod = null;
-    let indent = 0;
+    let previousPeriods = [];
     //  ----------------------------------------------
 
     // LOOP THROUGH THE BOOK:
@@ -89,19 +88,27 @@ export default function getLivro() {
 
             currentPeriod = li;
 
-            if(previousPeriod){
-                //test if it has a final date, if there is, compare, and if theres not, increment indent
-                if(previousPeriod.dates.final.length > 0) {
-                    //compare the bigger one
-                    if(previousPeriod.dates.final[previousPeriod.dates.final.length].timestamp > currentPeriod.dates.initial[0].timestamp){
-                        formattedEntry['period']
-                    }
+            //function that returns true if the period pnext is overlapping the period pbef
+            const isOverlapping = (pnext, pbef) => {
+                if(pbef.period.indent != pnext.period.indent) return false; //meaning theyre not even on the same indent
+                if(pbef.dates.final.length == 0) return true; //meaning pbef doesnt have a final date, it is still going on
+                const finalDateToCompare = pbef.dates.final[pbef.dates.final.length -1].timestamp;
+                const initialDateToCompare = pnext.dates.initial[0].timestamp;
+                if(initialDateToCompare - finalDateToCompare < 0) return true; //meaning initialDateToCompare happened before the finalDateToCompare
+                return false;
+            }
+
+            let indent = 0;
+
+            for(let j=0; j<previousPeriods.length; j++){
+                const overlap = isOverlapping(currentPeriod, previousPeriods[j]);
+                if(overlap) {
+                    indent ++;
+                    continue;
                 }
 
-            } else {
-                //if theres no previous period then just initialize with indent 0
-                formattedEntry['period'] = {indent}
             }
+
 
         }   
 
