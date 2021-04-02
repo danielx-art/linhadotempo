@@ -9,14 +9,17 @@ import ZoomBar from '../comps/ZoomBar.js'
 
 //const Barra = dynamic(() => import('../comps/barra.js'));
 
-const envPath = "C:/Users/Daniel/Desktop/Apps/timeline/linhadotempo/pages"; //development
+const envPath = process.env.NODE_ENV === "development" ? 
+"http://localhost:3000"
+: process.env.VERCEL_URL;
 
 const bookPath = "/api/livro.js";
 
+//PUT THIS IN THE CONTEXT MANAGEMENT SCOPE - import in the context, and use in the context
 export async function getStaticProps(context) {
 
-    //const book = await fetch("http://localhost:3000/api/livro.js");
-    const book =[];
+    const book = await fetch(envPath+bookPath);
+    //const book =[];
 
     return {
         props: {
