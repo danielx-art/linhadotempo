@@ -1,6 +1,14 @@
 export default function Periodo (props) {
-    
+
     return (
-        <div>{props.obj.tipo}</div>
+        <div>
+            <div>Periodo</div>
+            
+            <style jsx>{`
+            
+            
+            
+            `}</style>
+        </div>
     )
 }

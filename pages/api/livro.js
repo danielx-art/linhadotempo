@@ -5,7 +5,7 @@ import fs from 'fs'
 const path = '../../public/livro.json';
 
 
-export default function getLivro() {
+export default function getLivro(req, res) {
 
     const livroRaw = [];
     const formattedBook = [];
@@ -17,7 +17,7 @@ export default function getLivro() {
 
     //2. load the file
     const file = fs.readFileSync(path);
-    livroRaw = JSON.parse(usersRaw);
+    livroRaw = JSON.parse(file);
 
     //3. FORMAT
 
@@ -35,7 +35,7 @@ export default function getLivro() {
     //  
     //  -------------------PERIODS-------------------
     //  periods should get a period key, with an indent property
-    //  wich enables me to control horizontal positioning without
+    //  wich enables me to control cross-axis positioning without
     //  overlapping elements
     //  period: {
     //      indent
@@ -44,7 +44,12 @@ export default function getLivro() {
     //  the previous periods (default null and empty)
     let currentPeriod = null;
     let previousPeriods = [];
-    //  ----------------------------------------------
+    //
+    // -------------------PERSONAS-------------------
+    // will do the same with periods for the exact same reason
+    let currentPersona = null;
+    let previousPersonas = [];
+    //-----------------------------------------------
 
     // LOOP THROUGH THE BOOK:
 
@@ -83,36 +88,67 @@ export default function getLivro() {
         formattedEntry['dates'] = dates;
         li['dates'] = dates;
 
-        //3.b FORMAT PERIODS
+        
+
+        //HELPER FUNTION TO BE USED IN 3.B AND 3.C, it returns true if the event enext is overlapping the event ebef
+        //note that the indent must also be equal, but also note below that this function will only be called in this case
+        const isOverlapping = (enext, ebef) => {
+            if(ebef.dates.final.length == 0) return true; //meaning pbef doesnt have a final date, it is still going on
+            const finalDateToCompare = ebef.dates.final[ebef.dates.final.length -1].timestamp;
+            const initialDateToCompare = enext.dates.initial[0].timestamp;
+            if(initialDateToCompare - finalDateToCompare < 0) return true; //meaning initialDateToCompare happened before the finalDateToCompare
+            return false;
+        }
+
+        //3.B FORMAT PERIODS
         if(li.tipo == 'periodo') {
 
             currentPeriod = li;
 
-            //function that returns true if the period pnext is overlapping the period pbef
-            const isOverlapping = (pnext, pbef) => {
-                if(pbef.period.indent != pnext.period.indent) return false; //meaning theyre not even on the same indent
-                if(pbef.dates.final.length == 0) return true; //meaning pbef doesnt have a final date, it is still going on
-                const finalDateToCompare = pbef.dates.final[pbef.dates.final.length -1].timestamp;
-                const initialDateToCompare = pnext.dates.initial[0].timestamp;
-                if(initialDateToCompare - finalDateToCompare < 0) return true; //meaning initialDateToCompare happened before the finalDateToCompare
-                return false;
-            }
-
             let indent = 0;
 
             for(let j=0; j<previousPeriods.length; j++){
-                const overlap = isOverlapping(currentPeriod, previousPeriods[j]);
+
+                const overlap = indent == previousPeriods[j].period.indent ? isOverlapping(currentPeriod, previousPeriods[j]) : false;
+
                 if(overlap) {
                     indent ++;
                     continue;
                 }
-
+                break;
             }
 
+            formattedEntry['period'] = {indent};
+            li['period'] = {indent};
+            previousPeriods.push(li);
+        }
 
-        }   
+        //3.C FORMAT PERSONAS
+        if(li.tipo == 'personagem') {
 
+            currentPersona = li;
+
+            let indent = 0;
+
+            for(let j=0; j<previousPersonas.length; j++){
+
+                const overlap = indent == previousPersonas[j].persona.indent ? isOverlapping(currentPersona, previousPersonas[j]) : false;
+
+                if(overlap) {
+                    indent ++;
+                    continue;
+                }
+                break;
+            }
+
+            formattedEntry['persona'] = {indent};
+            li['persona'] = {indent};
+            previousPersonas.push(li);
+        }
+
+        formattedBook.push(formattedEntry);
     }
 
+    res.json(formattedBook);
 
 }

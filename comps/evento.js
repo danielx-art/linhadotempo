@@ -1,6 +1,14 @@
 export default function Evento (props) {
-    
+
     return (
-        <div>{props.obj.tipo}</div>
+        <div>
+            <div>Evento</div>
+            
+            <style jsx>{`
+            
+            
+            
+            `}</style>
+        </div>
     )
 }
