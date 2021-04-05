@@ -1,25 +1,22 @@
 
 //import dynamic from 'next/dynamic'
 
-import {useState, useEffect, useContext} from 'react'
+import {useState, useEffect, useContext, createContext} from 'react'
 
-import {SuperContextProvider, SuperContext} from '../comps/ContextManagement';
+//import {SuperContextProvider, SuperContext} from '../comps/ContextManagement';
 
 import ZoomBar from '../comps/ZoomBar.js'
 
-//const Barra = dynamic(() => import('../comps/barra.js'));
-
+/* ---------- GET THE BOOK -----------*/
 const envPath = process.env.NODE_ENV === "development" ? 
 "http://localhost:3000"
 : process.env.VERCEL_URL;
 
-const bookPath = "/api/livro.js";
+const bookPath = "/api/book";
 
-//PUT THIS IN THE CONTEXT MANAGEMENT SCOPE - import in the context, and use in the context
 export async function getStaticProps(context) {
 
-    const book = await fetch(envPath+bookPath);
-    //const book =[];
+    const book = await fetch(`${envPath + bookPath}`).then(res => res.json());
 
     return {
         props: {
@@ -28,17 +25,49 @@ export async function getStaticProps(context) {
     }
 }
 
+export const allContext = createContext();
+
 export default function Home(props){
 
-    const state = useContext(SuperContext);
+    const setLanguage = (language) => {
+      setState({...state, language: language})
+    }
+
+    const setZoom = (value) => {
+        setState({...state, zoom: value});
+    }
+
+    const setTheme = (theme) => {
+        setState({...state, theme: theme})
+    }
+
+    const initState = {
+
+        language: "pt-br",
+        setLanguage,
+    
+        windowDimensions: null,
+    
+        zoom: 1,
+        setZoom,
+    
+        book: props.book,
+    
+        theme: 'default',
+        setTheme
+    
+    }
+
+    const [state, setState] = useState(initState);
+
+    console.log(state.book);
 
     return (
-        <SuperContextProvider>
+        <allContext.Provider value={state}>
             <div className="out_container">
                 <ZoomBar />
-
-                {/* Bar, SideNav */}
-
+                {state.book.map((el,index) => <div key={index}>{el.type}</div>)}
+                
                 <style jsx>{`
                     .out_container{
                         position: relative;
@@ -49,7 +78,7 @@ export default function Home(props){
                     }
                 `}</style>
             </div>
-        </SuperContextProvider>
+        </allContext.Provider>
     )
 }
 

@@ -1,23 +1,23 @@
-//import livroJSON from '../../public/livro.json';
-
 import fs from 'fs'
 
-const path = '../../public/livro.json';
+import path from 'path'
 
+export default async function getLivro(req, res) {
 
-export default function getLivro(req, res) {
+    let pathToBook = path.resolve('./public', 'livro.json');
 
-    const livroRaw = [];
-    const formattedBook = [];
+    let livroRaw = [];
+    let formattedBook = [];
 
     //1. if file doesnt exist, return empty response
-    if (!fs.existsSync(path)) {
+    if (!fs.existsSync(pathToBook)) {
         res.json([]);
+        return;
     }
 
     //2. load the file
-    const file = fs.readFileSync(path);
-    livroRaw = JSON.parse(file);
+    const file = await fs.readFileSync(pathToBook);
+    livroRaw = await JSON.parse(file);
 
     //3. FORMAT
 
@@ -146,9 +146,15 @@ export default function getLivro(req, res) {
             previousPersonas.push(li);
         }
 
+        formattedEntry['type'] = li.tipo;
+        formattedEntry['title'] = li.titulo;
+        formattedEntry['description'] = li.descricao;
+        formattedEntry['tags'] = li.tags;
+        formattedEntry['more'] = li.mais;
+        formattedEntry['personas'] = li.personagens;
         formattedBook.push(formattedEntry);
     }
 
+    //const bookJSON = JSON.stringify(formattedBook)
     res.json(formattedBook);
-
 }

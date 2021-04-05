@@ -1,10 +1,12 @@
-import {SuperContext} from './ContextManagement.js';
+//import {SuperContext} from './ContextManagement.js';
+
+import {allContext} from '../pages/index';
 
 import {useContext, useState, useRef} from 'react';
 
 export default function ZoomBar() {
 
-    const {zoom, setZoom} = useContext(SuperContext);
+    const {zoom, setZoom} = useContext(allContext);
     const [zoomCheck, setZoomCheck] = useState(false);
 
     const sliderValue = useRef(null);
