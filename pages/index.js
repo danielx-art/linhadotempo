@@ -1,6 +1,3 @@
-
-import fs from 'fs'
-
 import livro from '..public/livro.json'
 
 import {useState, useEffect, createContext} from 'react'
