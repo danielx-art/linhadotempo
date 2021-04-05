@@ -165,6 +165,5 @@ export default function getLivro(req, res) {
     // }
 
     // res.json(formattedBook);
-    const test13 = JSON.stringify(["Hello world!"]);
     res.status(200).json(["Hello world!"]);
 }
