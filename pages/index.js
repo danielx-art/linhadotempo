@@ -1,6 +1,8 @@
 
 import fs from 'fs'
 
+import livro from '..public/livro.json'
+
 import {useState, useEffect, createContext} from 'react'
 
 import ZoomBar from '../comps/ZoomBar.js'
@@ -20,7 +22,7 @@ const pathToBook = envPath + bookPath;
 
 export async function getStaticProps(context) {
 
-    let livroRaw = [];
+    let livroRaw = await JSON.parse(livro);
     let formattedBook = [];
 
     // //1. if file doesnt exist, return empty response
@@ -33,8 +35,8 @@ export async function getStaticProps(context) {
     // }
 
     //2. load the file
-    const file = await fs.readFileSync(bookPath);
-    livroRaw = await JSON.parse(file);
+    // const file = await fs.readFileSync(pathToBook);
+    // livroRaw = await JSON.parse(file);
 
     //3. FORMAT
 
