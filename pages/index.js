@@ -10,7 +10,7 @@ export const allContext = createContext();
 /* ---------------------- GET THE BOOK ----------------------*/
 const envPath = process.env.NODE_ENV === "development" ? 
 "http://localhost:3000"
-: process.env.VERCEL_URL;
+: process.env.NEXT_PUBLIC_VERCEL_URL;
 
 const bookPath = "/api/book";
 
