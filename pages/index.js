@@ -23,14 +23,14 @@ export async function getStaticProps(context) {
     let livroRaw = [];
     let formattedBook = [];
 
-    //1. if file doesnt exist, return empty response
-    if (!fs.existsSync(pathToBook)) {
-        return  {
-                props: {
-                    book: []
-                }
-        }
-    }
+    // //1. if file doesnt exist, return empty response
+    // if (!fs.existsSync(pathToBook)) {
+    //     return  {
+    //             props: {
+    //                 book: []
+    //             }
+    //     }
+    // }
 
     //2. load the file
     const file = await fs.readFileSync(pathToBook);
