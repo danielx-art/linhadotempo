@@ -18,7 +18,7 @@ export async function getStaticProps(context) {
 
     console.log(`The path is ${envPath + bookPath}`); //<-- This is outputting the absolute URL correctly
 
-    const bookTest = await fetch(envPath + bookPath).then(res => res.json());
+    const bookTest = await fetch(envPath + bookPath)
     const book = [];
 
     return {
