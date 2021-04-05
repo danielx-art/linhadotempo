@@ -10,12 +10,12 @@ const bookPath = "/livro.json";
 
 //const pathToBook = envPath + bookPath;
 
-export default function getLivro(req, res) {
+export default async function getLivro(req, res) {
 
     // const pathToBook = path.resolve('./public', 'livro.json');
 
     // let livroRaw = [];
-    // let formattedBook = [];
+    let formattedBook = [];
 
 
     // //1. if file doesnt exist, return empty response
@@ -164,6 +164,5 @@ export default function getLivro(req, res) {
     //     formattedBook.push(formattedEntry);
     // }
 
-    // res.json(formattedBook);
-    res.status(200).json(["Hello world!"]);
+    res.json(formattedBook);
 }
