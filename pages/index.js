@@ -14,14 +14,14 @@ const envPath = process.env.NODE_ENV === "development" ?
 
 const bookPath = "/api/book";
 
-export function getStaticProps(context) {
+export async function getStaticProps(context) {
 
     console.log(`The path is ${envPath + bookPath}`); //<-- This is outputting the absolute URL correctly
 
-    const bookRaw = fetch(envPath + bookPath).then(res => res.json());
+    const bookRaw = await fetch(envPath + bookPath);
     console.log(bookRaw);
-    const book = bookRaw;
-    //const book = [];
+    //const book = bookRaw;
+    const book = [];
 
     return {
         props: {
