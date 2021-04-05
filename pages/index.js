@@ -25,8 +25,11 @@ export async function getStaticProps(context) {
 
     //1. if file doesnt exist, return empty response
     if (!fs.existsSync(pathToBook)) {
-        res.json([]);
-        return;
+        return  {
+                props: {
+                    book: []
+                }
+        }
     }
 
     //2. load the file
