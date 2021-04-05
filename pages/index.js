@@ -3,11 +3,13 @@
 
 import {useState, useEffect, useContext, createContext} from 'react'
 
-//import {SuperContextProvider, SuperContext} from '../comps/ContextManagement';
-
 import ZoomBar from '../comps/ZoomBar.js'
 
-/* ---------- GET THE BOOK -----------*/
+import {useWindowSize} from '../comps/useWindowSize.js'
+
+export const allContext = createContext();
+
+/* ---------------------- GET THE BOOK ----------------------*/
 const envPath = process.env.NODE_ENV === "development" ? 
 "http://localhost:3000"
 : process.env.VERCEL_URL;
@@ -24,8 +26,6 @@ export async function getStaticProps(context) {
         }
     }
 }
-
-export const allContext = createContext();
 
 export default function Home(props){
 
@@ -46,8 +46,6 @@ export default function Home(props){
         language: "pt-br",
         setLanguage,
     
-        windowDimensions: null,
-    
         zoom: 1,
         setZoom,
     
@@ -60,13 +58,13 @@ export default function Home(props){
 
     const [state, setState] = useState(initState);
 
-    console.log(state.book);
+    const windowDimensions = useWindowSize();
 
     return (
         <allContext.Provider value={state}>
             <div className="out_container">
                 <ZoomBar />
-                {state.book.map((el,index) => <div key={index}>{el.type}</div>)}
+                {windowDimensions.width}
                 
                 <style jsx>{`
                     .out_container{
@@ -81,41 +79,3 @@ export default function Home(props){
         </allContext.Provider>
     )
 }
-
-
-
-/* -------------------------------------------
------- Hook for different windows sizes ------
----------------------------------------------*/
-function useWindowSize() {
-    // Initialize state with undefined width/height so server and client renders match
-    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
-    const [windowSize, setWindowSize] = useState({
-      width: 500,
-      height: 500,
-    });
-  
-    useEffect(() => {
-      // only execute all the code below in client side
-      if (typeof window !== 'undefined') {
-        // Handler to call on window resize
-        function handleResize() {
-          // Set window width/height to state
-          setWindowSize({
-            width: window.innerWidth,
-            height: window.innerHeight,
-          });
-        }
-      
-        // Add event listener
-        window.addEventListener("resize", handleResize);
-       
-        // Call handler right away so state gets updated with initial window size
-        handleResize();
-      
-        // Remove event listener on cleanup
-        return () => window.removeEventListener("resize", handleResize);
-      }
-    }, []); // Empty array ensures that effect is only run on mount
-    return windowSize;
-  }
