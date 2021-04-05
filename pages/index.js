@@ -16,6 +16,7 @@ const bookPath = "/api/book";
 
 export async function getStaticProps(context) {
 
+    console.log(`The path is ${bookPath}`);
     const book = await fetch(envPath + bookPath).then(res => res.json());
     //const book = [];
 
@@ -61,7 +62,7 @@ export default function Home(props){
         <allContext.Provider value={state}>
             <div className="out_container">
                 <ZoomBar />
-                
+                <div> Test: {props.book} </div>
                 <style jsx>{`
                     .out_container{
                         position: relative;
