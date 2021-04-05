@@ -10,13 +10,14 @@ export const allContext = createContext();
 /* ---------------------- GET THE BOOK ----------------------*/
 const envPath = process.env.NODE_ENV === "development" ? 
 "http://localhost:3000"
-: process.env.VERCEL_URL;
+: `https://${process.env.VERCEL_URL}`;
 
 const bookPath = "/api/book";
 
 export async function getStaticProps(context) {
 
     console.log(`The path is ${envPath + bookPath}`);
+    console.log(process.env);
     const book = await fetch(envPath + bookPath).then(res => res.json());
     //const book = [];
 
