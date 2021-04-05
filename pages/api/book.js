@@ -2,15 +2,21 @@ import fs from 'fs'
 
 import path from 'path'
 
+const envPath = process.env.NODE_ENV === "development" ? 
+"http://localhost:3000"
+: process.env.VERCEL_URL;
+
+const bookPath = "/livro.json";
+
 export default async function getLivro(req, res) {
 
-    let pathToBook = path.resolve('./public', 'livro.json');
+    //let pathToBook = path.resolve('./public', 'livro.json');
 
     let livroRaw = [];
     let formattedBook = [];
 
     //1. if file doesnt exist, return empty response
-    if (!fs.existsSync(pathToBook)) {
+    if (!fs.existsSync(envPath + bookPath)) {
         res.json([]);
         return;
     }
