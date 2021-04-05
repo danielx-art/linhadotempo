@@ -16,10 +16,8 @@ const bookPath = "/api/book";
 
 export async function getStaticProps(context) {
 
-    //const book = await fetch(`${envPath + bookPath}`).then(res => res.json());
-    const book = [];
-
-    console.log(envPath + bookPath);
+    const book = await fetch(envPath + bookPath).then(res => res.json());
+    //const book = [];
 
     return {
         props: {

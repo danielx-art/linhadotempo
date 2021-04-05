@@ -10,8 +10,6 @@ const bookPath = "/livro.json";
 
 export default async function getLivro(req, res) {
 
-    //let pathToBook = path.resolve('./public', 'livro.json');
-
     let livroRaw = [];
     let formattedBook = [];
 
