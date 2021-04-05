@@ -33,7 +33,7 @@ export async function getStaticProps(context) {
     // }
 
     //2. load the file
-    const file = await fs.readFileSync(pathToBook);
+    const file = await fs.readFileSync(bookPath);
     livroRaw = await JSON.parse(file);
 
     //3. FORMAT
