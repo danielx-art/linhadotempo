@@ -19,8 +19,7 @@ const pathToBook = envPath + bookPath;
 
 export async function getStaticProps(context) {
 
-    console.log(livro);
-    let livroRaw = [];
+    let livroRaw = livro;
     let formattedBook = [];
 
     // //1. if file doesnt exist, return empty response
