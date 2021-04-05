@@ -172,6 +172,8 @@ export async function getStaticProps(context) {
         formattedBook.push(formattedEntry);
     } // end of looping through the book
 
+    console.log(formattedBook);
+
     return {
         props: {
             book: formattedBook
