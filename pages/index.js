@@ -13,8 +13,6 @@ export async function getStaticProps(context) {
     let livroRaw = livro;
     let formattedBook = [];
 
-    console.log("Hi! " + Array.isArray(livroRaw));
-
     // //1. if file doesnt exist, return empty response
     // if (!fs.existsSync(pathToBook)) {
     //     return  {
@@ -164,8 +162,6 @@ export async function getStaticProps(context) {
         formattedBook.push(formattedEntry);
     } // end of looping through the book
 
-    console.log(formattedBook);
-
     return {
         props: {
             book: formattedBook
@@ -213,7 +209,7 @@ export default function Home(props){
         <allContext.Provider value={state}>
             <div className="out_container">
                 <ZoomBar />
-                <div> Test: {props.book.map((el, index) => <div key={index}>{el.titulo}</div>)} </div>
+                <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div>
                 <style jsx>{`
                     .out_container{
                         position: relative;
