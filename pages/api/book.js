@@ -165,5 +165,6 @@ export default async function getLivro(req, res) {
     // }
 
     // res.json(formattedBook);
-    res.json([1,2,3]);
+    const test13 = JSON.stringify([1,2,3,4]);
+    res.json(test13);
 }
