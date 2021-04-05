@@ -8,19 +8,12 @@ import {useWindowSize} from '../comps/useWindowSize.js'
 
 export const allContext = createContext();
 
-/* ---------------------- GET THE BOOK ----------------------*/
-const envPath = process.env.NODE_ENV === "development" ? 
-"http://localhost:3000"
-: `${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-
-const bookPath = "/livro.json";
-
-const pathToBook = envPath + bookPath;
-
 export async function getStaticProps(context) {
 
     let livroRaw = livro;
     let formattedBook = [];
+
+    console.log("Hi! " + Array.isArray(livroRaw));
 
     // //1. if file doesnt exist, return empty response
     // if (!fs.existsSync(pathToBook)) {
