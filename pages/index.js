@@ -1,4 +1,6 @@
 
+import fs from 'fs'
+
 import {useState, useEffect, createContext} from 'react'
 
 import ZoomBar from '../comps/ZoomBar.js'
