@@ -8,13 +8,15 @@ const envPath = process.env.NODE_ENV === "development" ?
 
 const bookPath = "/livro.json";
 
+const pathToBook = envPath + bookPath
+
 export default async function getLivro(req, res) {
 
     let livroRaw = [];
     let formattedBook = [];
 
     //1. if file doesnt exist, return empty response
-    if (!fs.existsSync(envPath + bookPath)) {
+    if (!fs.existsSync(pathToBook)) {
         res.json([]);
         return;
     }
