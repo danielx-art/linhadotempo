@@ -1,4 +1,4 @@
-import livro from '../livro.json'
+import livro from '../public/livro.json'
 
 import {useState, useEffect, createContext} from 'react'
 
