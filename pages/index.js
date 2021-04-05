@@ -12,14 +12,15 @@ const envPath = process.env.NODE_ENV === "development" ?
 "http://localhost:3000"
 : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
-const bookPath = "/api/book.json";
+const bookPath = "/api/book";
 
 export async function getStaticProps(context) {
 
     //console.log(`The path is ${envPath + bookPath}`); //<-- This is outputting the absolute URL correctly
 
-    const bookRaw = await fetch(envPath + bookPath).then(res => res.text()).then(text => console.log(text));
-    
+    const bookRaw = await fetch(envPath + bookPath).then((res) => res.text()).then((text) => console.log(text));
+    const bookRaw2 = await fetch(envPath + bookPath).then((res) => res.json()).then((json) => console.log(json));
+
     //const book = bookRaw;
     const book = [];
 
