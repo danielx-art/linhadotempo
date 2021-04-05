@@ -12,7 +12,7 @@ const envPath = process.env.NODE_ENV === "development" ?
 "http://localhost:3000"
 : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
-const bookPath = "/api/book";
+const bookPath = "/api/book.json";
 
 export async function getStaticProps(context) {
 
