@@ -1,24 +1,26 @@
 
-//import dynamic from 'next/dynamic'
-
 import {useState, useEffect, useContext, createContext} from 'react'
 
 import ZoomBar from '../comps/ZoomBar.js'
 
 import {useWindowSize} from '../comps/useWindowSize.js'
 
+import path from 'path'
+
 export const allContext = createContext();
 
 /* ---------------------- GET THE BOOK ----------------------*/
-const envPath = process.env.NODE_ENV === "development" ? 
-"http://localhost:3000"
-: process.env.VERCEL_URL;
+// const envPath = process.env.NODE_ENV === "development" ? 
+// "http://localhost:3000"
+// : process.env.VERCEL_URL;
 
-const bookPath = "/api/book";
+// const bookPath = "/api/book";
+
+const pathToBook = path.resolve('./public', 'livro.json');
 
 export async function getStaticProps(context) {
 
-    const book = await fetch(`${envPath + bookPath}`).then(res => res.json());
+    const book = await fetch(`${pathToBook}`).then(res => res.json());
 
     return {
         props: {
@@ -58,13 +60,10 @@ export default function Home(props){
 
     const [state, setState] = useState(initState);
 
-    const windowDimensions = useWindowSize();
-
     return (
         <allContext.Provider value={state}>
             <div className="out_container">
                 <ZoomBar />
-                {windowDimensions.width}
                 
                 <style jsx>{`
                     .out_container{
