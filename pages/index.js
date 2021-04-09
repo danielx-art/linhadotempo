@@ -2,13 +2,77 @@ import livro from '../public/livro.json'
 
 import {useState, useEffect, createContext} from 'react'
 
-import ZoomBar from '../comps/ZoomBar.js'
-
 import {useWindowSize} from '../comps/useWindowSize.js'
+
+import Main from '../comps/three/Main'
 
 export const allContext = createContext();
 
 export async function getStaticProps(context) {
+
+    return {
+        props: {
+            book: getLivro()
+        }
+    }
+}
+
+
+/*--------------------------------------------------------------------------
+----------------------------------HOME--------------------------------------
+--------------------------------------------------------------------------*/
+
+export default function Home(props){
+
+    const setLanguage = (language) => {
+      setState({...state, language: language})
+    }
+
+    const setZoom = (value) => {
+        setState({...state, zoom: value});
+    }
+
+    const setTheme = (theme) => {
+        setState({...state, theme: theme})
+    }
+
+    const initState = {
+
+        language: "pt-br",
+        setLanguage,
+    
+        zoom: 1,
+        setZoom,
+    
+        book: props.book,
+    
+        theme: 'default',
+        setTheme
+    
+    }
+
+    const [state, setState] = useState(initState);
+
+    return (
+        <allContext.Provider value={state}>
+            <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div>
+            <Main />
+        </allContext.Provider>
+    )
+}
+
+
+
+
+
+
+
+
+/*--------------------------------------------------------------------------
+--------------------FUNCTION TO FORMAT THE DATA-----------------------------
+--------------------------------------------------------------------------*/
+
+const getLivro = function() {
 
     let formattedBook = [];
 
@@ -148,64 +212,6 @@ export async function getStaticProps(context) {
         formattedBook.push(formattedEntry);
     } // end of looping through the book
 
-    return {
-        props: {
-            book: formattedBook
-        }
-    }
-}
+    return formattedBook;
 
-
-/*--------------------------------------------------------------------------
-----------------------------------HOME--------------------------------------
---------------------------------------------------------------------------*/
-
-export default function Home(props){
-
-    const setLanguage = (language) => {
-      setState({...state, language: language})
-    }
-
-    const setZoom = (value) => {
-        setState({...state, zoom: value});
-    }
-
-    const setTheme = (theme) => {
-        setState({...state, theme: theme})
-    }
-
-    const initState = {
-
-        language: "pt-br",
-        setLanguage,
-    
-        zoom: 1,
-        setZoom,
-    
-        book: props.book,
-    
-        theme: 'default',
-        setTheme
-    
-    }
-
-    const [state, setState] = useState(initState);
-
-    return (
-        <allContext.Provider value={state}>
-            <div className="out_container">
-                <ZoomBar />
-                <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div>
-                <style jsx>{`
-                    .out_container{
-                        position: relative;
-                        margin: 0;
-                        padding: 0;
-                        height: 100vh;
-                        width: 100vw;
-                    }
-                `}</style>
-            </div>
-        </allContext.Provider>
-    )
 }

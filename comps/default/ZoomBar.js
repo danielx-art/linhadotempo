@@ -1,6 +1,6 @@
 import {useContext, useState, useRef} from 'react';
 
-import {allContext} from '../pages/index';
+import {allContext} from '../../pages/index';
 
 export default function ZoomBar() {
 
