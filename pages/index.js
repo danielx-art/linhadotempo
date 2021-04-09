@@ -10,21 +10,7 @@ export const allContext = createContext();
 
 export async function getStaticProps(context) {
 
-    let livroRaw = livro;
     let formattedBook = [];
-
-    // //1. if file doesnt exist, return empty response
-    // if (!fs.existsSync(pathToBook)) {
-    //     return  {
-    //             props: {
-    //                 book: []
-    //             }
-    //     }
-    // }
-
-    //2. load the file
-    // const file = await fs.readFileSync(pathToBook);
-    // livroRaw = await JSON.parse(file);
 
     //3. FORMAT
 
@@ -60,9 +46,9 @@ export async function getStaticProps(context) {
 
     // LOOP THROUGH THE BOOK:
 
-    for(let i=0; i<livroRaw.length; i++){
+    for(let i=0; i<livro.length; i++){
 
-        const li = livroRaw[i];                             //current entry in loop
+        const li = livro[i];                             //current entry in loop
         const formattedEntry = {};
         
         //3.A. FORMAT DATES

@@ -1,8 +1,6 @@
-//import {SuperContext} from './ContextManagement.js';
+import {useContext, useState, useRef} from 'react';
 
 import {allContext} from '../pages/index';
-
-import {useContext, useState, useRef} from 'react';
 
 export default function ZoomBar() {
 
