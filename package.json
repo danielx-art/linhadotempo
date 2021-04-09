@@ -20,6 +20,7 @@
   "homepage": "https://github.com/danielx-art/linhadotempo#readme",
   "dependencies": {
     "@react-three/drei": "^4.1.2",
+    "@react-three/fiber": "^6.0.10",
     "next": "^10.0.7",
     "next-transpile-modules": "^6.4.0",
     "react": "^17.0.1",
