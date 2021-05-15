@@ -1,58 +1,72 @@
-import { useRef, useState } from 'react'
-import { Canvas, useFrame, extend, useThree } from 'react-three-fiber'
-import { Box } from '@react-three/drei'
-
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-extend({ OrbitControls });
+import { useRef, useState, useEffect, useMemo } from 'react'
+import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import * as THREE from 'three'
+import MyCamera from '../three/MyCamera'
+//import MyGeometry from '../three/MyGeometry'
+import MyDodecahedron from '../three/MyDodecahedron'
+//import MyOrbitControls from '../three/MyOrbitControls'
 
 export default function Main() { 
 
-    return (
-        <div className="canvasContainer">
-        <Canvas>
-            <ambientLight intensity={2}/>
-            <MyBox position={[10, 0, 0]} />
-            {typeof window !== 'undefined' && <MyControls />}
-        </Canvas>
-        </div>
-    )
+  const dirLight = useMemo(()=>{
+  
+    const light = new THREE.DirectionalLight('white');
+    light.castShadow=true;
+    //Set up shadow properties for the light
+    light.shadow.mapSize.width = 10240 // default
+    light.shadow.mapSize.height = 10240 // default
+    light.shadow.camera.near = 0.1 // default
+    light.shadow.camera.far = 5000 // default
+    light.shadow.camera.top = -100 // default
+    light.shadow.camera.right = 100 // default
+    light.shadow.camera.left = -100 // default
+    light.shadow.camera.bottom = 100 // default
+    return light
+  
+  },[])
+
+  return (
+    <div className="canvasContainer">
+
+    <Canvas 
+      linear = "true"
+      //frameloop="demand" 
+      shadows = "true"
+      shadowMap
+    >
+      
+      <MyCamera position={[0, 0, 30]} infLimit={-1000} supLimit ={0} />
+      
+      <ambientLight intensity={0.2}/>
+
+      <Background />
+
+      <MyDodecahedron position={[0,0,0]} scale={1} />
+
+      <primitive object={dirLight} position={[30, 0, 30]} />
+      <primitive object={dirLight.target} position={[0, 0, 0]} />
+
+      {/* //PLANE
+      <mesh receiveShadow position={[0,0,-2]}>
+        <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
+        <meshStandardMaterial attach="material" color="gray" />
+      </mesh> */}
+
+      {/* <MyGeometry position={[0, 0, 0]} L={100} W={5} res={4} /> */}
+
+    </Canvas>
+    </div>
+  )
 }
 
-const MyControls = function(){
+function Background() {
+  const { scene } = useThree()
 
-    const {
-        camera,
-        gl: { domElement }
-    } = useThree()
+  useEffect(() => {
 
-    return(
-        <orbitControls args={[camera, domElement]} />
-    )
+    scene.background = new THREE.Color('rgb(50,50,100)');
 
+    return () => (scene.environment = scene.background = null)
+  }, [])
+  return null
 }
-
-const MyBox = function (props) {
-    const mesh = useRef()
-  
-    const [hovered, setHover] = useState(false)
-    const [active, setActive] = useState(false)
-  
-    useFrame(() => (mesh.current.rotation.x = mesh.current.rotation.y += 0.01))
-  
-    return (
-      <Box
-        args={[1, 1, 1]}
-        {...props}
-        ref={mesh}
-        scale={active ? [6, 6, 6] : [5, 5, 5]}
-        onClick={() => setActive(!active)}
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
-      >
-        <meshStandardMaterial
-          attach="material"
-          color={hovered ? '#2b6c76' : '#720b23'}
-        />
-      </Box>
-    )
-  }

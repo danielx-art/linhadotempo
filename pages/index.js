@@ -2,7 +2,7 @@ import livro from '../public/livro.json'
 
 import {useState, useEffect, createContext} from 'react'
 
-import {useWindowSize} from '../comps/useWindowSize.js'
+//import {useWindowSize} from '../comps/useWindowSize.js'
 
 import Main from '../comps/three/Main'
 
@@ -53,10 +53,16 @@ export default function Home(props){
 
     const [state, setState] = useState(initState);
 
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    },[]);
+
     return (
         <allContext.Provider value={state}>
             <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div>
-            <Main />
+            {mounted && <Main />}
         </allContext.Provider>
     )
 }
