@@ -1,12 +1,16 @@
-import { useRef, useState, useEffect, useMemo } from 'react'
+import { useRef, useState, useEffect, useMemo, useContext } from 'react'
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { useContextBridge } from '@react-three/drei'
 import * as THREE from 'three'
 import MyCamera from '../three/MyCamera'
 //import MyGeometry from '../three/MyGeometry'
 import MyDodecahedron from '../three/MyDodecahedron'
+import { allContext } from '../../pages'
 //import MyOrbitControls from '../three/MyOrbitControls'
 
 export default function Main() { 
+
+  const ContextBridge = useContextBridge(allContext);
 
   const dirLight = useMemo(()=>{
   
@@ -33,15 +37,15 @@ export default function Main() {
       //frameloop="demand" 
       shadows = "true"
       shadowMap
-    >
-      
+    > <ContextBridge>
+
       <MyCamera position={[0, 0, 30]} infLimit={-1000} supLimit ={0} />
       
       <ambientLight intensity={0.2}/>
 
       <Background />
 
-      <MyDodecahedron position={[0,0,0]} scale={1} />
+      <MyDodecahedron position={[0,0,0]} scale={1} id={1} />
 
       <primitive object={dirLight} position={[30, 0, 30]} />
       <primitive object={dirLight.target} position={[0, 0, 0]} />
@@ -54,7 +58,7 @@ export default function Main() {
 
       {/* <MyGeometry position={[0, 0, 0]} L={100} W={5} res={4} /> */}
 
-    </Canvas>
+      </ContextBridge></Canvas>
     </div>
   )
 }

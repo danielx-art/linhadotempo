@@ -25,7 +25,7 @@ export async function getStaticProps(context) {
 export default function Home(props){
 
     const setLanguage = (language) => {
-      setState({...state, language: language})
+        setState({...state, language: language});
     }
 
     const setZoom = (value) => {
@@ -33,7 +33,11 @@ export default function Home(props){
     }
 
     const setTheme = (theme) => {
-        setState({...state, theme: theme})
+        setState({...state, theme: theme});
+    }
+
+    const setSelectedObject = (objectID) => {
+        setState({...state, selectedObject: objectID});
     }
 
     const initState = {
@@ -47,7 +51,10 @@ export default function Home(props){
         book: props.book,
     
         theme: 'default',
-        setTheme
+        setTheme,
+
+        selectedObject: -1,
+        setSelectedObject
     
     }
 
@@ -61,8 +68,9 @@ export default function Home(props){
 
     return (
         <allContext.Provider value={state}>
-            <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div>
+            {/* <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div> */}
             {mounted && <Main />}
+            <div className="selectedTest">{state.selectedObject}</div>
         </allContext.Provider>
     )
 }

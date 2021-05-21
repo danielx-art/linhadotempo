@@ -13,7 +13,8 @@ export default function useYScroll(bounds, props) {
     },
     [bounds, y, set]
   )
-  const bind = useGesture({ onWheel: fn, onDrag: fn }, props)
+  //const bind = useGesture({ onWheel: fn, onDrag: fn }, props)
+  const bind = useGesture({ onWheel: fn }, props)
   useEffect(() => props && props.domTarget && bind(), [props, bind])
   //return [y, bind]
   return y;
