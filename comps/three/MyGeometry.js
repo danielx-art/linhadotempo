@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import {useMemo} from 'react'
-
 export default function MyGeometry({ position, L, W, res }) {
 
     const [vertices, faces, normals, uvs] = useMemo( () => 
@@ -109,7 +108,8 @@ export default function MyGeometry({ position, L, W, res }) {
     , []);
 
     return (
-      <mesh castShadow={true} receiveShadow={true} position={position}>
+        <>
+        <mesh castShadow={true} receiveShadow={true} position={position}>
 
         <bufferGeometry 
             attach="geometry"
@@ -140,6 +140,7 @@ export default function MyGeometry({ position, L, W, res }) {
 
         <meshPhongMaterial attach="material" color="blue" side={THREE.DoubleSide} />
 
-      </mesh>
+        </mesh>
+        </>
     )
 }
