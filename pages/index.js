@@ -70,7 +70,7 @@ export default function Home(props){
         <allContext.Provider value={state}>
             {/* <div> Test: {props.book.map((el, index) => <div key={index}>{el.title}</div>)} </div> */}
             {mounted && <Main />}
-            <div className="selectedTest">{state.selectedObject}</div>
+            
         </allContext.Provider>
     )
 }

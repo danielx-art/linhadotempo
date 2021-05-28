@@ -1,19 +1,17 @@
-import { useRef, useState, useEffect, useMemo, useContext, createRef } from 'react'
+import { useRef, useState, useEffect, useMemo, useContext } from 'react'
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useContextBridge } from '@react-three/drei'
 import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
-import { BlurPass, Resizer, KernelSize } from 'postprocessing'
 import * as THREE from 'three'
 import MyCamera from '../three/MyCamera'
-import MyGeometry from '../three/MyGeometry'
 import MyDodecahedron from '../three/MyDodecahedron'
 import { allContext } from '../../pages'
 
-//import MyOrbitControls from '../three/MyOrbitControls'
 
 export default function Main() { 
 
   const ContextBridge = useContextBridge(allContext);
+  const {selectedObject, book} = useContext(allContext);
 
   const dirLight = useMemo(()=>{
   
@@ -34,7 +32,32 @@ export default function Main() {
 
   const ambientLightRef = useRef();
   const dirLightRef = useRef();
-  const objBloomRef = createRef();
+
+  const [showBloom, setShowBloom] = useState(false);
+  const refSelectedObject = useRef();
+  const bookRefs = useRef();
+  bookRefs.current = [];
+
+  const addToRefs = (item) => {
+    if (item && !bookRefs.current.includes(item)) {
+      bookRefs.current.push(item);
+    }
+  };
+
+  useEffect(() => {
+    
+    if(selectedObject != -1 && bookRefs.current.length > 0) {
+      refSelectedObject.current = bookRefs.current[selectedObject];
+      setShowBloom(true);
+    } else {
+      setShowBloom(false);
+    }
+    
+  }, [selectedObject]);
+
+  useEffect(()=>{
+    !showBloom ? refSelectedObject.current = undefined : null
+  }, [showBloom])
 
   return (
     <div className="canvasContainer">
@@ -52,23 +75,20 @@ export default function Main() {
 
       <Background />
 
-      <MyDodecahedron position={[0,0,0]} scale={1} id={1} ref={objBloomRef}/>
+      {book.map((item, index)=>{ 
+        return(
+          <MyDodecahedron position={[0,-index*10,0]} scale={1} id={index} key={index} ref={addToRefs}/>
+        )
+      })}
 
       <primitive object={dirLight} position={[30, 0, 30]} ref={dirLightRef}/>
       <primitive object={dirLight.target} position={[0, 0, 0]} />
 
-      
-      <mesh receiveShadow position={[0,0,-2]} >
-        <boxGeometry attach="geometry" args={[2, 2, 2]} />
-        <meshStandardMaterial attach="material" color={[250,0,20]} />
-      </mesh>
-
-      {/* <MyGeometry position={[0, 0, 0]} L={100} W={5} res={4} /> */}
 
       <EffectComposer>
-      <SelectiveBloom
+      {false && <SelectiveBloom
         lights={[dirLightRef, ambientLightRef]} // ⚠️ REQUIRED! all relevant lights
-        selection={[objBloomRef]} // selection of objects that will have bloom effect
+        selection={refSelectedObject} // selection of objects that will have bloom effect
         selectionLayer={10} // selection layer
         intensity={2.0} // The bloom intensity.
         //blurPass={undefined} // A blur pass.
@@ -77,10 +97,12 @@ export default function Main() {
         //kernelSize={KernelSize.LARGE} // blur kernel size
         luminanceThreshold={0.25} // luminance threshold. Raise this value to mask out darker elements in the scene.
         luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
-      />
+      />}
       </EffectComposer>
 
       </ContextBridge></Canvas>
+
+      <div className="selectedTest">{selectedObject}</div>
     </div>
   )
 }

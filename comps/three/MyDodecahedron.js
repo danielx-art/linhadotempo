@@ -1,46 +1,49 @@
-import { useContext, useRef, useState, forwardRef } from 'react'
+import { useContext, useRef, useState, useEffect, forwardRef } from 'react'
 import { useFrame } from "@react-three/fiber"
 import { useSpring, a } from '@react-spring/three'
 import { Dodecahedron } from '@react-three/drei'
 import { allContext } from '../../pages';
 
 const MyDodecahedron = forwardRef(
-  ({position, scale, id}, objBloomRef) => {
+  ({position, scale, id}, ref) => {
 
       const mesh = useRef();
 
       const [hovered, setHover] = useState(false);
-      const [active, setActive] = useState(false);
 
       const {selectedObject, setSelectedObject} = useContext(allContext);
 
       const [{ wobble, color }] = useSpring(
         {
-          wobble: active ? 1.1*scale : hovered ? 1.02*scale : 1*scale,
-          color: hovered ? [250,0,20] : [100,0,250], //not working
+          wobble: selectedObject == id ? 1.3*scale : hovered ? 1.1*scale : 1*scale,
+          color: selectedObject == id ? 'cyan' : 'pink',
           config: (n) => n === 'wobble' && hovered && { mass: 2, tension: 1000, friction: 10 }
         },
-        [hovered, active]
+        [hovered, selectedObject]
       );
     
       useFrame(() => {
-          mesh.current.position.x = position[0] + 2*Math.sin(new Date().getTime()/1800);
-          mesh.current.position.y = position[1] + 2*Math.sin(new Date().getTime()/2000);
-          mesh.current.position.z = position[2] + 2*Math.sin(new Date().getTime()/600);
-          mesh.current.rotation.x = mesh.current.rotation.y += 0.01;
+          mesh.current.position.x = position[0] + 2*Math.sin(new Date().getTime()/1800*(id/2));
+          mesh.current.position.y = position[1] + 2*Math.sin(new Date().getTime()/2000*(id*id/7));
+          mesh.current.position.z = position[2] + 2*Math.sin(new Date().getTime()/600*(1+id*0.05));
+          mesh.current.rotation.x = mesh.current.rotation.y += 0.01 +id*id/2000 - id/200;
       });
+
+      const handleClick = () => {
+        selectedObject == id ? setSelectedObject(-1) : setSelectedObject(id);
+      }
     
       return (
         <a.group 
           position={position} 
           ref={mesh} 
           scale={wobble}
-          onClick={(e) => {setActive(!active); setSelectedObject((!active && id)|| -1 )}}      //here at setSelectedObject we jave to use !active, because it happens before the actual setActive
+          onClick={handleClick}      //here at setSelectedObject we jave to use !active, because it happens before the actual setActive
           onPointerOver={(e) => setHover(true)}
           onPointerOut={(e) => setHover(false)}
         >
-          <Dodecahedron ref={objBloomRef}>
-            <a.meshStandardMaterial emissive={color} emissiveIntensity={0.2} />
+          <Dodecahedron ref={ref}>
+            <a.meshStandardMaterial color={color} emissive={'white'} emissiveIntensity={(scale-1)*3}/>
           </Dodecahedron>
         </a.group>
 
