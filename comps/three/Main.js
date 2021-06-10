@@ -6,15 +6,15 @@ import * as THREE from 'three'
 import MyCamera from '../three/MyCamera'
 import MyDodecahedron from '../three/MyDodecahedron'
 import { allContext } from '../../pages'
+import {sortedTimestamps, findPositioning} from '../../helpers'
 
 
 export default function Main() { 
 
   const ContextBridge = useContextBridge(allContext);
-  const {selectedObject, book} = useContext(allContext);
-
-  const dirLight = useMemo(()=>{
+  const {selectedObject, book, theme} = useContext(allContext);
   
+  const dirLight = useMemo(()=>{
     const light = new THREE.DirectionalLight('white');
     light.castShadow=true;
     //Set up shadow properties for the light
@@ -27,7 +27,6 @@ export default function Main() {
     light.shadow.camera.left = -100 // default
     light.shadow.camera.bottom = 100 // default
     return light
-  
   },[]);
 
   const ambientLightRef = useRef();
@@ -57,7 +56,38 @@ export default function Main() {
 
   useEffect(()=>{
     !showBloom ? refSelectedObject.current = undefined : null
-  }, [showBloom])
+  }, [showBloom]);
+
+  const initialPositions = useMemo(()=>{
+    let initialPositions = [];
+    book.forEach((item)=>{
+      let [ox, oy] = theme.orientation;
+      for(let date in item.dates){
+        item.dates[date].forEach((thisDate)=>{
+          let [mainAxis, crossAxis] = thisDate.positioning;         
+          let px = ox*mainAxis + (1-Math.abs(ox))*crossAxis;
+          let py = oy*mainAxis + (1-Math.abs(oy))*crossAxis;
+          thisDate.positioning = [px, py];
+          initialPositions.push([px, py, 0]);
+        })
+      }
+    });
+    
+    return initialPositions;
+  }, [theme, book]);
+
+  const [firstPos, lastPos] = useMemo(()=>{
+    let [ox, oy] = theme.orientation;
+    let firstP = Math.abs(ox)*book[0].dates.initial[0].positioning[0] + Math.abs(oy)*book[0].dates.initial[0].positioning[1];
+
+    let sortedTimestampsArray = sortedTimestamps(book);    
+    let lastTimestamp = sortedTimestampsArray[sortedTimestampsArray.length -1];
+    let lastPosition = findPositioning(book, lastTimestamp);
+    
+    let lastP = Math.abs(ox)*lastPosition[0] + Math.abs(oy)*lastPosition[1];
+
+    return [Math.min(firstP, lastP),Math.max(firstP, lastP)]
+  }, [initialPositions]);
 
   return (
     <div className="canvasContainer">
@@ -69,7 +99,7 @@ export default function Main() {
       shadowMap
     > <ContextBridge>
 
-      <MyCamera position={[0, 0, 30]} infLimit={-1000} supLimit ={0} />
+      <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={120} orientation={theme.orientation} />
       
       <ambientLight intensity={0.2} ref={ambientLightRef}/>
 
@@ -77,7 +107,7 @@ export default function Main() {
 
       {book.map((item, index)=>{ 
         return(
-          <MyDodecahedron position={[0,-index*10,0]} scale={1} id={index} key={index} ref={addToRefs}/>
+          <MyDodecahedron position={initialPositions[index]} scale={1} id={index} key={index} ref={addToRefs}/>
         )
       })}
 

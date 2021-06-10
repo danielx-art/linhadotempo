@@ -23,10 +23,10 @@ const MyDodecahedron = forwardRef(
       );
     
       useFrame(() => {
-          mesh.current.position.x = position[0] + 2*Math.sin(new Date().getTime()/1800*(id/2));
-          mesh.current.position.y = position[1] + 2*Math.sin(new Date().getTime()/2000*(id*id/7));
-          mesh.current.position.z = position[2] + 2*Math.sin(new Date().getTime()/600*(1+id*0.05));
-          mesh.current.rotation.x = mesh.current.rotation.y += 0.01 +id*id/2000 - id/200;
+        mesh.current.position.x = position[0] + 2*Math.sin(new Date().getTime()/1800*(id/2));
+        mesh.current.position.y = position[1] + 2*Math.sin(new Date().getTime()/2000*(id*id/7));
+        mesh.current.position.z = position[2] + 2*Math.sin(new Date().getTime()/600*(1+id*0.05));
+        mesh.current.rotation.x = mesh.current.rotation.y += 0.01 +id*id/2000 - id/200;
       });
 
       const handleClick = () => {
