@@ -4,8 +4,21 @@ import { useSpring, a } from '@react-spring/three'
 import { Dodecahedron } from '@react-three/drei'
 import { allContext } from '../../pages';
 
-const MyDodecahedron = forwardRef(
-  ({position, scale, id}, ref) => {
+const BookPersona = forwardRef(
+  ({item, scale, id}, ref) => {
+
+    const [position, periodLenght, periodWidth] = useMemo(()=>{
+      let [ox,oy] = theme.orientation;
+      let initialPoint = Math.abs(ox) != 0 ? item.dates.initial[0].positioning[0] : item.dates.initial[0].positioning[1]; 
+      let finalPoint = Math.abs(ox) != 0 ? item.dates.final[0].positioning[0] : item.dates.final[0].positioning[1];
+      let len = Math.abs(finalPoint - initialPoint);
+      let initPos = item.dates.initial[0].positioning;
+      let pos = Math.abs(ox) != 0 ? [initPos[0] + ox*len/2, initPos[1], 0] : [initPos[0], initPos[1] + oy*len/2, 0]
+      let w = 2;
+      return [ pos, len, w ];
+    }, [theme]);
+
+      const type = item.type;
 
       const mesh = useRef();
 
@@ -30,7 +43,7 @@ const MyDodecahedron = forwardRef(
       });
 
       const handleClick = () => {
-        selectedObject == id ? setSelectedObject(-1) : setSelectedObject(id);
+        selectedObject == id ? setSelectedObject(-1) : (setSelectedObject(id), console.log(position));
       }
     
       return (
@@ -42,13 +55,13 @@ const MyDodecahedron = forwardRef(
           onPointerOver={(e) => setHover(true)}
           onPointerOut={(e) => setHover(false)}
         >
-          <Dodecahedron ref={ref}>
+          <Plane args={[periodWidth, periodLenght, 2, 4]} ref={ref}>
             <a.meshStandardMaterial color={color} emissive={'white'} emissiveIntensity={(scale-1)*3}/>
-          </Dodecahedron>
+          </Plane>
         </a.group>
 
       )
   }
 );
 
-export default MyDodecahedron;
+export default BookPersona;

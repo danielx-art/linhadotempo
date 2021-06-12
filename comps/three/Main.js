@@ -4,7 +4,9 @@ import { useContextBridge } from '@react-three/drei'
 import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import MyCamera from '../three/MyCamera'
-import MyDodecahedron from '../three/MyDodecahedron'
+import BookEvent from './BookEvent'
+import BookPersona from './BookPersona'
+import BookPeriod from './BookPeriod'
 import { allContext } from '../../pages'
 import {sortedTimestamps, findPositioning} from '../../helpers'
 
@@ -58,7 +60,7 @@ export default function Main() {
     !showBloom ? refSelectedObject.current = undefined : null
   }, [showBloom]);
 
-  const initialPositions = useMemo(()=>{
+  const initializePositions = useMemo(()=>{
     let initialPositions = [];
     book.forEach((item)=>{
       let [ox, oy] = theme.orientation;
@@ -68,12 +70,9 @@ export default function Main() {
           let px = ox*mainAxis + (1-Math.abs(ox))*crossAxis;
           let py = oy*mainAxis + (1-Math.abs(oy))*crossAxis;
           thisDate.positioning = [px, py];
-          initialPositions.push([px, py, 0]);
         })
       }
     });
-    
-    return initialPositions;
   }, [theme, book]);
 
   const [firstPos, lastPos] = useMemo(()=>{
@@ -87,7 +86,7 @@ export default function Main() {
     let lastP = Math.abs(ox)*lastPosition[0] + Math.abs(oy)*lastPosition[1];
 
     return [Math.min(firstP, lastP),Math.max(firstP, lastP)]
-  }, [initialPositions]);
+  }, [initializePositions]);
 
   return (
     <div className="canvasContainer">
@@ -99,16 +98,18 @@ export default function Main() {
       shadowMap
     > <ContextBridge>
 
-      <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={120} orientation={theme.orientation} />
+      <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={160} orientation={theme.orientation} />
       
       <ambientLight intensity={0.2} ref={ambientLightRef}/>
 
       <Background />
 
       {book.map((item, index)=>{ 
-        return(
-          <MyDodecahedron position={initialPositions[index]} scale={1} id={index} key={index} ref={addToRefs}/>
-        )
+
+        if(item.type == 'event') return <BookEvent item={item} scale={1} id={index} key={index} ref={addToRefs}/>
+        if(item.type == 'persona') return <BookPersona item={item} scale={1} id={index} key={index} ref={addToRefs}/>
+        if(item.type == 'period') return <BookPeriod item={item} scale={1} id={index} key={index} ref={addToRefs}/>
+
       })}
 
       <primitive object={dirLight} position={[30, 0, 30]} ref={dirLightRef}/>

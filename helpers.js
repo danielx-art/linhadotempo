@@ -140,7 +140,7 @@ const isOverlapping = (enext, ebef) => {
 }
 
 //4 SET CROSS AXIS OFFSET FOR PERIODS AND PERSONAS
-export function crossOffsetPeriods(periods) {
+export function crossOffsetPeriods(periods, initialValue, increment) {
 
     //  periods should get a an indent property
     //  wich enables me to control cross-axis positioning without
@@ -153,13 +153,13 @@ export function crossOffsetPeriods(periods) {
         
         currentPeriod = periods[i];
 
-        let offset = 0;
+        let offset = initialValue;
 
         for(let j=0; j<previousPeriods.length; j++){
 
             const overlap = offset == previousPeriods[j].dates.initial[0].positioning[1] ? isOverlapping(currentPeriod, previousPeriods[j]) : false;
 
-            overlap ? offset ++ : null;
+            overlap ? offset += increment : null;
 
         }
 
@@ -223,32 +223,27 @@ export function findPositioning (book, timestamp) {
 //distance_cap is in years
 //mesh_size is the radius of the event blobs and the width of the periods and personas stripes
 //cross_axis_spacing is a minimun value, that should be past 1.2*mesh_size
-export function calculatePositionings(distance_cap = 10, year_size = 4, mesh_size = 2, cross_axis_spacing = 3) {
+export function calculatePositionings(distance_cap = 4, year_size = 2, mesh_size = 2, cross_axis_spacing = 3) {
 
     let book = formatDates(livro);
     let {events, personas, periods} = categorizeBook(book);
-    crossOffsetPeriods(periods);
-    crossOffsetPeriods(personas);
+    crossOffsetPeriods(periods, -1, -1);
+    crossOffsetPeriods(personas, 1,  1);
     crossOffsetEvents(events, year_size, mesh_size);
     let sortedTimestampsArray = sortedTimestamps(book);
 
     //calculate main axis position based on cap_dist and year_size and set cross-axis positions as well to use the same loop
-    book.forEach((item)=>{
-        for(let date in item.dates){
-            item.dates[date].forEach((thisDate) => {
-                let index = sortedTimestampsArray.findIndex((timestamp)=> timestamp == thisDate.timestamp);
-                //find the position of previous timestamp
-                let previousPositioning = index > 0 ? findPositioning( book, sortedTimestampsArray[index-1] ) : thisDate.positioning;
-                let previousTimestamp = index > 0 ? sortedTimestampsArray[index-1] : thisDate.timestamp;
-                let diffInYears = (thisDate.timestamp - previousTimestamp)/(1000*3600*24*30*12);
-                //is diff is bigger then a max (the cap), then set it to the cap, and position is previous position plys this diff 
-                diffInYears = diffInYears >= distance_cap ? distance_cap*year_size : diffInYears*year_size;
-                thisDate.positioning[0] = diffInYears + previousPositioning[0];
-                //also set cross-axis positioning
-                thisDate.positioning[1] = cross_axis_spacing >= 1.2*mesh_size ? thisDate.positioning[1]*cross_axis_spacing : thisDate.positioning[1]*1.2*mesh_size;
-            })
-        }
-    });
+    sortedTimestampsArray.forEach((timestamp, index)=>{
+        let currentPositioning = findPositioning(book, timestamp);
+        let previousTimestamp = index > 0 ? sortedTimestampsArray[index-1] : null;
+        let previousPositioning = index > 0 ? findPositioning(book, previousTimestamp) : currentPositioning;
+        let diffInYears = index > 0 ? (timestamp - previousTimestamp)/(1000*3600*24*30*12) : 0;
+        //is diff is bigger then a max (the cap), then set it to the cap, and position is previous position plys this diff 
+        diffInYears = diffInYears >= distance_cap ? distance_cap: diffInYears;
+        currentPositioning[0] = diffInYears*year_size + previousPositioning[0];
+        //also set cross-axis positioning
+        currentPositioning[1] = cross_axis_spacing >= 1.2*mesh_size ? currentPositioning[1]*cross_axis_spacing : currentPositioning[1]*1.2*mesh_size;
+    })
 
     return book;
 };

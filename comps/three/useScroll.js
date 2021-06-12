@@ -16,7 +16,7 @@ export default function useScroll(bounds, props) {
     [bounds, pos, set]
   );
 
-  const bind = useGesture({ onWheel: fn }, props.config);
+  const bind = useGesture({ onWheel: fn, onDrag: fn }, props.config);
 
   useEffect(() => props.config && props.config.domTarget && bind(), [props.config, bind]);
 
