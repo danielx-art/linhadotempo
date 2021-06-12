@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useEffect, forwardRef } from 'react'
+import { useContext, useRef, useState, useMemo, forwardRef } from 'react'
 import { useFrame } from "@react-three/fiber"
 import { useSpring, a } from '@react-spring/three'
 import { Dodecahedron } from '@react-three/drei'
