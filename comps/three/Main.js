@@ -9,6 +9,7 @@ import BookPersona from './BookPersona'
 import BookPeriod from './BookPeriod'
 import { allContext } from '../../pages'
 import {sortedTimestamps, findPositioning} from '../../helpers'
+import { Dodecahedron } from '@react-three/drei'
 
 
 export default function Main() { 
@@ -101,6 +102,11 @@ export default function Main() {
       <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={160} orientation={theme.orientation} />
       
       <ambientLight intensity={0.2} ref={ambientLightRef}/>
+
+      {/*object for testing and debugging: */}
+      <Dodecahedron radius={5} position={[0,0]}>
+        <meshStandardMaterial color={'white'}/>
+      </Dodecahedron>
 
       <Background />
 

@@ -23,12 +23,12 @@
     "@react-three/drei": "^4.3.3",
     "@react-three/fiber": "^6.0.19",
     "@react-three/postprocessing": "^2.0.3",
+    "@use-gesture/react": "^10.0.0-beta.16",
     "next": "^10.0.7",
     "next-transpile-modules": "^6.4.0",
     "postprocessing": "^6.21.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-use-gesture": "^9.1.3",
     "three": "^0.128.0"
   }
 }

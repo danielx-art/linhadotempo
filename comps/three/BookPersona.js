@@ -50,7 +50,7 @@ const BookPersona = forwardRef(
         <a.group 
           position={position} 
           ref={mesh} 
-          scale={wobble}
+          scale={1}
           onClick={handleClick}      //here at setSelectedObject we jave to use !active, because it happens before the actual setActive
           onPointerOver={(e) => setHover(true)}
           onPointerOut={(e) => setHover(false)}
