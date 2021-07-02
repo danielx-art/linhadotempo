@@ -1,7 +1,6 @@
 import { useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import { useFrame, useThree } from "@react-three/fiber"
 import { a } from '@react-spring/three'
-//import useMyScroll from './useMyScroll'
 import { useSpring, config } from '@react-spring/core'
 import { useGesture, useWheel } from '@use-gesture/react'
 
@@ -12,24 +11,27 @@ export default function MyCamera(props) {
     const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
   
     const fn = useCallback(
-      ({ offset }) => {
-        api.start({pos: offset[1]/scrollSpeed});
+      ({ event, movement, offset, xy, memo = spring.pos.get()}) => {      
+        if(event.type == "wheel"){
+          const newP = memo + movement[1]/(2*scrollSpeed);
+          api.start({pos: newP});
+          return newP
+        }else{
+          const newP = memo + offset[1]/(scrollSpeed/7);
+          api.start({pos: newP});
+          return memo
+        }
       },
       [spring, api]
     );
 
     const bind = useGesture(
       { 
-        onWheel: fn
+        onWheel: fn,
+        onDrag: fn
       }, 
       {
         target: window,
-        wheel: { 
-          bounds: {
-            top: posOne*scrollSpeed,
-            bottom: posTwo*scrollSpeed
-          }
-        }
       }
     );
 
