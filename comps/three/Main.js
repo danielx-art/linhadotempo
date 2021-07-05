@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect, useMemo, useContext } from 'react'
+import { useRef, useState, useEffect, useMemo, useContext, useCallback } from 'react'
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useContextBridge } from '@react-three/drei'
-import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
+//import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import MyCamera from '../three/MyCamera'
 import BookEvent from './BookEvent'
@@ -10,12 +10,16 @@ import BookPeriod from './BookPeriod'
 import { allContext } from '../../pages'
 import {sortedTimestamps, findPositioning} from '../../helpers'
 import { Dodecahedron } from '@react-three/drei'
+import { useSpring, config } from '@react-spring/core'
+import { a } from '@react-spring/three'
+import { useGesture } from '@use-gesture/react'
 
 
 export default function Main() { 
 
   const ContextBridge = useContextBridge(allContext);
   const {selectedObject, book, theme} = useContext(allContext);
+  const [ox,oy] = theme.orientation;
   
   const dirLight = useMemo(()=>{
     const light = new THREE.DirectionalLight('white');
@@ -35,8 +39,6 @@ export default function Main() {
   const ambientLightRef = useRef();
   const dirLightRef = useRef();
 
-  const [showBloom, setShowBloom] = useState(false);
-  const refSelectedObject = useRef();
   const bookRefs = useRef();
   bookRefs.current = [];
 
@@ -46,25 +48,10 @@ export default function Main() {
     }
   };
 
-  useEffect(() => {
-    
-    if(selectedObject != -1 && bookRefs.current.length > 0) {
-      refSelectedObject.current = bookRefs.current[selectedObject];
-      setShowBloom(true);
-    } else {
-      setShowBloom(false);
-    }
-    
-  }, [selectedObject]);
-
-  useEffect(()=>{
-    !showBloom ? refSelectedObject.current = undefined : null
-  }, [showBloom]);
-
   const initializePositions = useMemo(()=>{
     let initialPositions = [];
     book.forEach((item)=>{
-      let [ox, oy] = theme.orientation;
+      //let [ox, oy] = theme.orientation;
       for(let date in item.dates){
         item.dates[date].forEach((thisDate)=>{
           let [mainAxis, crossAxis] = thisDate.positioning;         
@@ -77,7 +64,7 @@ export default function Main() {
   }, [theme, book]);
 
   const [firstPos, lastPos] = useMemo(()=>{
-    let [ox, oy] = theme.orientation;
+    //let [ox, oy] = theme.orientation;
     let firstP = Math.abs(ox)*book[0].dates.initial[0].positioning[0] + Math.abs(oy)*book[0].dates.initial[0].positioning[1];
 
     let sortedTimestampsArray = sortedTimestamps(book);    
@@ -89,8 +76,39 @@ export default function Main() {
     return [Math.min(firstP, lastP),Math.max(firstP, lastP)]
   }, [initializePositions]);
 
+  const scrollingTarget = useRef(null);
+  // const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
+  
+  // const fn = useCallback(
+  //   ({ event, movement, memo = spring.pos.get()}) => {      
+  //     const posOne = firstPos;
+  //     const posTwo = lastPos;
+  //     const scrollSpeed = 160;
+
+  //     if(event.type == "wheel"){
+  //       const offsetTo = memo + movement[1]/(2*scrollSpeed);
+  //       const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+  //       api.start({pos: newPosition});
+  //       return newPosition
+  //     }else{
+  //       const offsetTo = memo + movement[1]/(scrollSpeed/10);
+  //       const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+  //       api.start({pos: newPosition});
+  //       return memo
+  //     }
+  //   },
+  //   [spring, api]
+  // );
+
+  // const bind = useGesture(
+  //   { 
+  //     onWheel: fn,
+  //     onDrag: fn
+  //   },
+  // );
+
   return (
-    <div className="canvasContainer">
+    <div className="canvasContainer" ref={scrollingTarget}>
 
     <Canvas 
       linear = "true"
@@ -98,8 +116,15 @@ export default function Main() {
       shadows = "true"
       shadowMap
     > <ContextBridge>
-
-      <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={160} orientation={theme.orientation} />
+      
+      {/* <a.group
+        position-x={ Math.abs(ox)!=0 ? spring.pos : 0}
+        position-y={ Math.abs(oy)!=0 ? spring.pos : 0}
+      >
+        <MyCamera position={[0, 0, 30]}/> 
+      </a.group> */}
+      
+      <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={160} orientation={theme.orientation} scrollingTarget={scrollingTarget} />
       
       <ambientLight intensity={0.2} ref={ambientLightRef}/>
 
@@ -120,22 +145,6 @@ export default function Main() {
 
       <primitive object={dirLight} position={[30, 0, 30]} ref={dirLightRef}/>
       <primitive object={dirLight.target} position={[0, 0, 0]} />
-
-
-      <EffectComposer>
-      {false && <SelectiveBloom
-        lights={[dirLightRef, ambientLightRef]} // ⚠️ REQUIRED! all relevant lights
-        selection={refSelectedObject} // selection of objects that will have bloom effect
-        selectionLayer={10} // selection layer
-        intensity={2.0} // The bloom intensity.
-        //blurPass={undefined} // A blur pass.
-        //width={Resizer.AUTO_SIZE} // render width
-        //height={Resizer.AUTO_SIZE} // render height
-        //kernelSize={KernelSize.LARGE} // blur kernel size
-        luminanceThreshold={0.25} // luminance threshold. Raise this value to mask out darker elements in the scene.
-        luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
-      />}
-      </EffectComposer>
 
       </ContextBridge></Canvas>
 

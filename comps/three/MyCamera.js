@@ -5,10 +5,8 @@ import { useSpring, config } from '@react-spring/core'
 import { useGesture, useWheel } from '@use-gesture/react'
 
 export default function MyCamera(props) {
-    const {position, posOne, posTwo, scrollSpeed, orientation} = props;
+    const {position, posOne, posTwo, scrollSpeed, orientation, scrollingTarget} = props;
     const [ox,oy] = orientation;
-    const {viewport} = useThree();
-    const {factor} = viewport;
     
     const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
   
@@ -23,8 +21,6 @@ export default function MyCamera(props) {
           const offsetTo = memo + movement[1]/(scrollSpeed/10);
           const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
           api.start({pos: newPosition});
-          console.log(event);
-          event.preventDefault();
           return memo
         }
       },
@@ -35,9 +31,9 @@ export default function MyCamera(props) {
       { 
         onWheel: fn,
         onDrag: fn
-      }, 
+      },
       {
-        target: window,
+        target: scrollingTarget
       }
     );
 
@@ -59,11 +55,12 @@ export default function MyCamera(props) {
     }, [])
     
     return (
-        <a.group 
+        <a.group
          position-x={ Math.abs(ox)!=0 ? spring.pos : position[0]}
          position-y={ Math.abs(oy)!=0 ? spring.pos : position[1]}
         >
             <perspectiveCamera ref={cameraRef} {...props} />
         </ a.group>
+        //<perspectiveCamera ref={cameraRef} {...props} />
     )
 }
