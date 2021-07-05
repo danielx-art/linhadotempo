@@ -13,7 +13,7 @@ export default function MyCamera(props) {
     const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
   
     const fn = useCallback(
-      ({ event, movement, offset, xy, memo = spring.pos.get()}) => {      
+      ({ event, movement, memo = spring.pos.get()}) => {      
         if(event.type == "wheel"){
           const offsetTo = memo + movement[1]/(2*scrollSpeed);
           const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
@@ -23,6 +23,8 @@ export default function MyCamera(props) {
           const offsetTo = memo + movement[1]/(scrollSpeed/10);
           const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
           api.start({pos: newPosition});
+          console.log(event);
+          event.preventDefault();
           return memo
         }
       },
