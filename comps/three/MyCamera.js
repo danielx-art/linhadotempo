@@ -20,7 +20,7 @@ export default function MyCamera(props) {
           api.start({pos: newPosition});
           return newPosition
         }else{
-          const offsetTo = memo + movement[1]/(2*scrollSpeed);
+          const offsetTo = memo + movement[1]/(scrollSpeed/10);
           const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
           api.start({pos: newPosition});
           return memo
