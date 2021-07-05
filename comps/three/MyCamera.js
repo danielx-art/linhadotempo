@@ -7,18 +7,22 @@ import { useGesture, useWheel } from '@use-gesture/react'
 export default function MyCamera(props) {
     const {position, posOne, posTwo, scrollSpeed, orientation} = props;
     const [ox,oy] = orientation;
+    const {viewport} = useThree();
+    const {factor} = viewport;
     
     const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
   
     const fn = useCallback(
       ({ event, movement, offset, xy, memo = spring.pos.get()}) => {      
         if(event.type == "wheel"){
-          const newP = memo + movement[1]/(2*scrollSpeed);
-          api.start({pos: newP});
-          return newP
+          const offsetTo = memo + movement[1]/(2*scrollSpeed);
+          const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+          api.start({pos: newPosition});
+          return newPosition
         }else{
-          const newP = memo + offset[1]/(scrollSpeed/7);
-          api.start({pos: newP});
+          const offsetTo = memo + movement[1]/(2*scrollSpeed);
+          const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+          api.start({pos: newPosition});
           return memo
         }
       },
