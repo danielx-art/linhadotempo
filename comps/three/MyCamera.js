@@ -5,40 +5,40 @@ import { useSpring, config } from '@react-spring/core'
 import { useGesture, useWheel } from '@use-gesture/react'
 
 export default function MyCamera(props) {
-    // const {position, posOne, posTwo, scrollSpeed, orientation, scrollingTarget} = props;
-    // const [ox,oy] = orientation;
+    const {position, posOne, posTwo, scrollSpeed, orientation, scrollingTarget} = props;
+    const [ox,oy] = orientation;
     
-    // const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
+    const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
   
-    // const fn = useCallback(
-    //   ({ event, movement, memo = spring.pos.get()}) => {      
-    //     if(event.type == "wheel"){
-    //       const offsetTo = memo + movement[1]/(2*scrollSpeed);
-    //       const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
-    //       api.start({pos: newPosition});
-    //       return newPosition
-    //     }else{
-    //       event.preventDefault();
-    //       const offsetTo = memo + movement[1]/(scrollSpeed/50);
-    //       const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
-    //       api.start({pos: newPosition});
-    //       return memo
-    //     }
-    //   },
-    //   [spring, api]
-    // );
+    const fn = useCallback(
+      ({ event, movement, memo = spring.pos.get()}) => {      
+        if(event.type == "wheel"){
+          const offsetTo = memo + movement[1]/(2*scrollSpeed);
+          const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+          api.start({pos: newPosition});
+          return newPosition
+        }else{
+          event.preventDefault();
+          const offsetTo = memo + movement[1]/(scrollSpeed/50);
+          const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+          api.start({pos: newPosition});
+          return memo
+        }
+      },
+      [spring, api]
+    );
 
-    // const bind = useGesture(
-    //   { 
-    //     onWheel: fn,
-    //     onDrag: fn
-    //   },
-    //   {
-    //     target: scrollingTarget
-    //   }
-    // );
+    const bind = useGesture(
+      { 
+        onWheel: fn,
+        onDrag: fn
+      },
+      {
+        target: scrollingTarget
+      }
+    );
 
-    // useEffect(() => spring.config && spring.config.target && bind(), [bind])
+    useEffect(() => spring.config && spring.config.target && bind(), [bind])
 
     const cameraRef = useRef()
     const set = useThree(({ set }) => set)
@@ -56,12 +56,12 @@ export default function MyCamera(props) {
     }, [])
     
     return (
-        // <a.group
-        //  position-x={ Math.abs(ox)!=0 ? spring.pos : position[0]}
-        //  position-y={ Math.abs(oy)!=0 ? spring.pos : position[1]}
-        // >
-        //     <perspectiveCamera ref={cameraRef} {...props} />
-        // </ a.group>
-        <perspectiveCamera ref={cameraRef} {...props} />
+        <a.group
+         position-x={ Math.abs(ox)!=0 ? spring.pos : position[0]}
+         position-y={ Math.abs(oy)!=0 ? spring.pos : position[1]}
+        >
+            <perspectiveCamera ref={cameraRef} {...props} />
+        </ a.group>
+        //<perspectiveCamera ref={cameraRef} {...props} />
     )
 }

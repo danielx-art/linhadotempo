@@ -77,38 +77,41 @@ export default function Main() {
   }, [initializePositions]);
 
   const scrollingTarget = useRef(null);
-  const [spring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
+  // const [scrollSpring, api] = useSpring(() => ({ pos: 0, config: config.slow }))
   
-  const fn = useCallback(
-    ({ event, movement, memo = spring.pos.get()}) => {      
-      const posOne = firstPos;
-      const posTwo = lastPos;
-      const scrollSpeed = 160;
+  // const fn = useCallback(
+  //   ({ event, movement, memo = scrollSpring.pos.get()}) => {      
+  //     const posOne = firstPos;
+  //     const posTwo = lastPos;
+  //     const scrollSpeed = 160;
 
-      if(event.type == "wheel"){
-        const offsetTo = memo + movement[1]/(2*scrollSpeed);
-        const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
-        api.start({pos: newPosition});
-        return newPosition
-      }else{
-        const offsetTo = memo + movement[1]/(scrollSpeed/10);
-        const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
-        api.start({pos: newPosition});
-        return memo
-      }
-    },
-    [spring, api]
-  );
+  //     if(event.type == "wheel"){
+  //       const offsetTo = memo + movement[1]/(2*scrollSpeed);
+  //       const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+  //       api.start({pos: newPosition});
+  //       return newPosition
+  //     }else{
+  //       const offsetTo = memo + movement[1]/(scrollSpeed/10);
+  //       const newPosition = offsetTo > posTwo ? posTwo : offsetTo < posOne ? posOne : offsetTo
+  //       api.start({pos: newPosition});
+  //       return memo
+  //     }
+  //   },
+  //   [scrollSpring, api]
+  // );
 
-  const bind = useGesture(
-    { 
-      onWheel: fn,
-      onDrag: fn
-    },
-  );
+  // const bind = useGesture(
+  //   { 
+  //     onWheel: fn,
+  //     onDrag: fn
+  //   },
+  //   {
+
+  //   }
+  // );
 
   return (
-    <div className="canvasContainer" ref={scrollingTarget} {...bind()}>
+    <div className="canvasContainer" ref={scrollingTarget}>
 
     <Canvas 
       linear = "true"
@@ -117,14 +120,14 @@ export default function Main() {
       shadowMap
     > <ContextBridge>
       
-      <a.group
-        position-x={ Math.abs(ox)!=0 ? spring.pos : 0}
-        position-y={ Math.abs(oy)!=0 ? spring.pos : 0}
+      {/* <a.group
+        position-x={ Math.abs(ox)!=0 ? scrollSpring.pos : 0}
+        position-y={ Math.abs(oy)!=0 ? scrollSpring.pos : 0}
       >
         <MyCamera position={[0, 0, 30]}/> 
-      </a.group>
+      </a.group> */}
       
-      {/* <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={160} orientation={theme.orientation} scrollingTarget={scrollingTarget} /> */}
+      <MyCamera position={[0, 0, 30]} posOne={firstPos} posTwo ={lastPos} scrollSpeed={160} orientation={theme.orientation} scrollingTarget={scrollingTarget} />
       
       <ambientLight intensity={0.2} ref={ambientLightRef}/>
 
